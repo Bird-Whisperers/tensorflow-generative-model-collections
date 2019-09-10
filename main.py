@@ -1,16 +1,6 @@
 import os
 
-## GAN Variants
-from GAN import GAN
 from CGAN import CGAN
-from infoGAN import infoGAN
-from ACGAN import ACGAN
-from EBGAN import EBGAN
-from WGAN import WGAN
-from WGAN_GP import WGAN_GP
-from DRAGAN import DRAGAN
-from LSGAN import LSGAN
-from BEGAN import BEGAN
 
 ## VAE Variants
 from VAE import VAE
@@ -27,9 +17,6 @@ def parse_args():
     desc = "Tensorflow implementation of GAN collections"
     parser = argparse.ArgumentParser(description=desc)
 
-    parser.add_argument('--gan_type', type=str, default='GAN',
-                        choices=['GAN', 'CGAN', 'infoGAN', 'ACGAN', 'EBGAN', 'BEGAN', 'WGAN', 'WGAN_GP', 'DRAGAN', 'LSGAN', 'VAE', 'CVAE'],
-                        help='The type of GAN', required=True)
     parser.add_argument('--dataset', type=str, default='mnist', choices=['mnist', 'fashion-mnist', 'celebA'],
                         help='The name of dataset')
     parser.add_argument('--epoch', type=int, default=20, help='The number of epochs to run')
@@ -74,24 +61,17 @@ def main():
       exit()
 
     # open session
-    models = [GAN, CGAN, infoGAN, ACGAN, EBGAN, WGAN, WGAN_GP, DRAGAN,
-              LSGAN, BEGAN, VAE, CVAE]
     with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
-        # declare instance for GAN
 
-        gan = None
-        for model in models:
-            if args.gan_type == model.model_name:
-                gan = model(sess,
-                            epoch=args.epoch,
-                            batch_size=args.batch_size,
-                            z_dim=args.z_dim,
-                            dataset_name=args.dataset,
-                            checkpoint_dir=args.checkpoint_dir,
-                            result_dir=args.result_dir,
-                            log_dir=args.log_dir)
-        if gan is None:
-            raise Exception("[!] There is no option for " + args.gan_type)
+        # declare instance for CGAN
+        gan = CGAN(sess,
+                   epoch=args.epoch,
+                   batch_size=args.batch_size,
+                   z_dim=args.z_dim,
+                   dataset_name=args.dataset,
+                   checkpoint_dir=args.checkpoint_dir,
+                   result_dir=args.result_dir,
+                   log_dir=args.log_dir)
 
         # build graph
         gan.build_model()
